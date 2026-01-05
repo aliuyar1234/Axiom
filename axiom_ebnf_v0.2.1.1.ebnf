@@ -1,0 +1,169 @@
+file            = NL* item (NL+ item)* NL* EOF ;
+stdlib_stub_file = NL* stub_item (NL+ stub_item)* NL* EOF ;
+
+item            = attr_line* visibility? (use_item | mod_item | type_item | trait_item | impl_item | fn_item) ;
+stub_item       = use_item | stub_mod_item | type_item | trait_item | impl_item | fn_decl ;
+stub_mod_item   = "mod" ident stub_item_block ;
+stub_item_block = "{" NL* stub_item (NL+ stub_item)* NL* "}" ;
+
+
+attr_line       = "#[" attr_name attr_args? "]" NL ;
+attr_name       = ident ( "::" ident )* ;
+attr_args       = "(" attr_arg ( "," attr_arg )* ( "," )? ")" ;
+attr_arg        = ident
+                | int_lit
+                | string_lit
+                | ident "=" ( ident | int_lit | string_lit ) ;
+
+visibility      = "pub" ( "(" ("crate" | "super") ")" )? ;
+
+use_item        = "use" "crate" "::" path_tail ( "as" ident )? ;
+path_tail       = ident ( "::" ident )* ;
+
+mod_item        = "mod" ident item_block ;
+item_block      = "{" NL* item (NL+ item)* NL* "}" ;
+
+fn_sig         = async_kw? "fn" ident generic_params? "(" params? ")" return_type? effects? ;
+fn_item         = fn_sig block ;
+fn_decl         = fn_sig ;
+async_kw        = "async" ;
+
+generic_params  = "<" ws_nl* generic_param ( ws_nl* "," ws_nl* generic_param )* ws_nl* ( "," ws_nl* )? ">" ;
+generic_param   = ident ( ws_nl* ":" ws_nl* bound_list )? ;
+bound_list      = path ( ws_nl* "+" ws_nl* path )* ;
+
+params          = param ( "," param )* ( "," )? ;
+param           = ident ":" type ;
+
+return_type     = "->" type ;
+
+effects         = "!" effect ( "+" effect )* ;
+effect          = "IO" | "Db" | "Async" | "Random" | "Time" | "Log" | "Spawn" ;
+
+trait_item      = "trait" ident generic_params? "{" NL* "}" ;
+
+impl_item       = "impl" ws_nl* generic_params? ws_nl* ( trait_impl | inherent_impl ) ;
+trait_impl      = trait_ref ws_nl* "for" ws_nl* type ws_nl* item_block_empty ;
+trait_ref       = path ;
+inherent_impl   = type ws_nl* inherent_block ;
+inherent_block  = "{" NL* fn_decl (NL+ fn_decl)* NL* "}" ;
+
+
+type_item       = "type" ident generic_params? "=" type_def ;
+
+type_def        = record_def
+                | sum_def
+                | newtype_def ;
+
+record_def       = "{" ws_nl* ( field_decl ( ws_nl* "," ws_nl* field_decl )* ws_nl* ( "," ws_nl* )? )? "}" ;
+field_decl      = ident ":" type ;
+
+sum_def         = "|" ws_nl* sum_variant ( ws_nl* "|" ws_nl* sum_variant )* ;
+sum_variant     = path ( ws_nl* record_payload )? ;
+record_payload   = "{" ws_nl* ( field_init ( ws_nl* "," ws_nl* field_init )* ws_nl* ( "," ws_nl* )? )? "}" ;
+
+newtype_def     = type ( ws_nl* where_clause )? ;
+where_clause    = "where" ws_nl* refinement_pred ;
+refinement_pred = range_pred | len_pred ;
+range_pred      = number_lit ws_nl* "..=" ws_nl* number_lit ;
+len_pred        = "len" ws_nl* rel_op ws_nl* int_lit ;
+rel_op          = ">" | ">=" | "==" | "<=" | "<" ;
+
+type            = ref_type | tuple_type | array_type | path_type ;
+
+ref_type        = "&" ws_nl* "mut"? ws_nl* type ;
+tuple_type      = "(" ws_nl* type ( ws_nl* "," ws_nl* type )+ ws_nl* ( "," ws_nl* )? ")"
+                | "(" ws_nl* type ws_nl* "," ws_nl* ")" ;
+array_type      = "[" ws_nl* type ws_nl* "," ws_nl* int_lit ws_nl* "]" ;
+path_type       = path generic_args? ;
+
+path            = ident ( "::" ident )* ;
+generic_args    = "<" ws_nl* generic_arg ( ws_nl* "," ws_nl* generic_arg )* ws_nl* ( "," ws_nl* )? ">" ;
+generic_arg     = type | string_lit | int_lit ;
+
+block           = "{" NL* stmt_list? NL* "}" ;
+stmt_list       = stmt_or_expr ( NL+ stmt_or_expr )* ;
+
+stmt_or_expr    = stmt | expr ;
+
+stmt            = let_stmt | assign_stmt | return_stmt | break_stmt | continue_stmt | expr_stmt ;
+let_stmt        = "let" ws_nl* "mut"? ws_nl* pattern ( ws_nl* ":" ws_nl* type )? ws_nl* "=" ws_nl* expr ;
+assign_stmt     = lvalue ws_nl* "=" ws_nl* expr ;
+lvalue          = ident ( "." ident )* ;
+
+return_stmt     = "return" ( ws_nl* expr )? ;
+break_stmt      = "break" ( ws_nl* label_ref )? ( ws_nl* expr )? ;
+continue_stmt   = "continue" ( ws_nl* label_ref )? ;
+
+expr_stmt       = expr ;
+
+label_ref       = "'" ident ;
+
+expr            = if_expr | match_expr | loop_expr | for_expr | logical_or ;
+
+if_expr         = "if" ws_nl* expr ws_nl* block ws_nl* "else" ws_nl* ( if_expr | block ) ;
+match_expr      = "match" ws_nl* expr ws_nl* "{" NL* match_arm ( NL+ match_arm )* NL* "}" ;
+match_arm       = pattern ( ws_nl* "if" ws_nl* expr )? ws_nl* "=>" ws_nl* expr ;
+
+loop_expr       = "loop" ws_nl* block ;
+for_expr        = "for" ws_nl* pattern ws_nl* "in" ws_nl* expr ws_nl* block ;
+
+logical_or      = logical_and ( ws_nl* "||" ws_nl* logical_and )* ;
+logical_and     = comparison ( ws_nl* "&&" ws_nl* comparison )* ;
+comparison      = range ( ws_nl* comp_op ws_nl* range )? ;
+comp_op         = "==" | "!=" | "<" | "<=" | ">" | ">=" ;
+
+range           = additive ( ws_nl* ( ".." | "..=" ) ws_nl* additive )? ;
+additive        = multiplicative ( ws_nl* ( "+" | "-" ) ws_nl* multiplicative )* ;
+multiplicative  = prefix ( ws_nl* ( "*" | "/" | "%" ) ws_nl* prefix )* ;
+
+prefix          = ( "-" | "!" | "&" | "&mut" )* ws_nl* postfix ;
+
+postfix         = primary ( ws_nl* postfix_op )* ;
+postfix_op      = turbofish_op | call_op | field_op | await_op | question_op ;
+turbofish_op    = "::" generic_args ;
+call_op         = "(" ws_nl* args? ws_nl* ")" ;
+args            = expr ( ws_nl* "," ws_nl* expr )* ws_nl* ( "," ws_nl* )? ;
+field_op        = "." ident ;
+await_op        = "." "await" ;
+question_op     = "?" ;
+
+primary         = literal
+                | closure
+                | path
+                | tuple_or_paren_expr
+                | array_lit
+                | record_lit
+                | block ;
+
+tuple_or_paren_expr = "(" ws_nl* expr ( ws_nl* "," ws_nl* expr )* ws_nl* ( "," ws_nl* )? ")" ;
+array_lit        = "[" ws_nl* expr_list? ws_nl* "]" ;
+expr_list        = expr ( ws_nl* "," ws_nl* expr )* ws_nl* ( "," ws_nl* )? ;
+
+record_lit       = path ws_nl* "{" ws_nl* field_inits? ws_nl* "}" ;
+field_inits      = field_init ( ws_nl* "," ws_nl* field_init )* ws_nl* ( "," ws_nl* )? ;
+field_init       = ident ws_nl* ":" ws_nl* expr ;
+
+closure          = "|" ws_nl* closure_params? ws_nl* "|" ws_nl* expr ;
+closure_params   = closure_param ( ws_nl* "," ws_nl* closure_param )* ws_nl* ( "," ws_nl* )? ;
+closure_param    = ident ( ws_nl* ":" ws_nl* type )? ;
+
+pattern          = wildcard_pat
+                | literal
+                | ident
+                | tuple_pat
+                | record_pat
+                | newtype_pat ;
+
+wildcard_pat     = "_" ;
+tuple_pat        = "(" ws_nl* pattern ( ws_nl* "," ws_nl* pattern )* ws_nl* ( "," ws_nl* )? ")" ;
+record_pat       = path ws_nl* "{" ws_nl* pat_fields? ws_nl* "}" ;
+pat_fields       = pat_field ( ws_nl* "," ws_nl* pat_field )* ws_nl* ( "," ws_nl* )? ;
+pat_field        = ident ws_nl* ":" ws_nl* pattern ;
+
+newtype_pat      = path ws_nl* "(" ws_nl* pattern ws_nl* ")" ;
+
+literal          = int_lit | float_lit | string_lit | char_lit | "true" | "false" ;
+number_lit       = int_lit | float_lit ;
+
+ws_nl            = ( NL )? ;

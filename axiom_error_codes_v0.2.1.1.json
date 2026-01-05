@@ -1,0 +1,245 @@
+{
+  "version": "v0.2.1.1",
+  "error_codes": [
+    {
+      "code": "E0001",
+      "summary_template": "invalid_utf8: source file is not valid UTF-8",
+      "primary_span_rule": "whole file",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0008",
+      "summary_template": "multiple_statements_one_line: only one item or statement per line",
+      "primary_span_rule": "start token of the second item/statement",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0009",
+      "summary_template": "chained_compare_forbidden: chained comparisons are not allowed",
+      "primary_span_rule": "comparison operator token",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0010",
+      "summary_template": "generic_args_require_turbofish: use `::<...>` for generics",
+      "primary_span_rule": "`<` token after callee",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0102",
+      "summary_template": "array_type_semicolon_forbidden: use `[T, N]`",
+      "primary_span_rule": "`;` token inside array type",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0109",
+      "summary_template": "match_wildcard_must_be_last: `_` must be final arm",
+      "primary_span_rule": "`_` pattern",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0110",
+      "summary_template": "invalid_for_iterable: for-loop iterable not supported",
+      "primary_span_rule": "`in <expr>` span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0201",
+      "summary_template": "unknown_field: no such field on type",
+      "primary_span_rule": "`.field` token",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0202",
+      "summary_template": "opaque_type_use_forbidden: cannot construct/destructure opaque stdlib type",
+      "primary_span_rule": "construction/pattern span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0203",
+      "summary_template": "invalid_format_string: format string shape not supported",
+      "primary_span_rule": "format string literal",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0204",
+      "summary_template": "format_string_not_literal: fmt argument must be a string literal",
+      "primary_span_rule": "fmt argument span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0205",
+      "summary_template": "nominal_type_not_alias: type is nominal, not interchangeable",
+      "primary_span_rule": "the type name in assignment/call",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0207",
+      "summary_template": "duplicate_field: field listed more than once",
+      "primary_span_rule": "duplicate field name",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0210",
+      "summary_template": "reserved_name_redefinition: `{name}` is a reserved prelude/stdlib identifier",
+      "primary_span_rule": "the identifier token that introduces the forbidden binding",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0211",
+      "summary_template": "inherent_impl_forbidden_in_user_code: inherent impl blocks are stdlib-only",
+      "primary_span_rule": "the `impl` keyword of the inherent impl item",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0301",
+      "summary_template": "missing_effect: callee requires effect not declared by caller",
+      "primary_span_rule": "call expression span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0302",
+      "summary_template": "await_outside_async: `.await` used outside `async fn`",
+      "primary_span_rule": "`.await` token",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0307",
+      "summary_template": "effectful_closure_forbidden: closures must be pure in v0.2.1.1",
+      "primary_span_rule": "closure body span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0308",
+      "summary_template": "unknown_or_invalid_effect: effect not in closed set or async mismatch",
+      "primary_span_rule": "effect identifier token",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0309",
+      "summary_template": "duplicate_effect: effect listed more than once",
+      "primary_span_rule": "duplicate effect token",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0401",
+      "summary_template": "use_after_move: moved value used again",
+      "primary_span_rule": "use site span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0402",
+      "summary_template": "missing_capability_turbofish: mint requires `::<\"...\">`",
+      "primary_span_rule": "call expression span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0403",
+      "summary_template": "capability_policy_not_literal: capability policy must be string literal",
+      "primary_span_rule": "generic arg span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0404",
+      "summary_template": "borrow_violation: violates &/&mut exclusivity",
+      "primary_span_rule": "borrow site span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0501",
+      "summary_template": "raw_access_forbidden: cannot access/destructure Raw<T>",
+      "primary_span_rule": "offending pattern/field access span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0601",
+      "summary_template": "overlapping_impl_forbidden: overlapping trait impls are not allowed",
+      "primary_span_rule": "second impl span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0702",
+      "summary_template": "module_file_ambiguous: both file and dir module exist",
+      "primary_span_rule": "module path span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0703",
+      "summary_template": "module_file_missing: module path has no file",
+      "primary_span_rule": "module path span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0704",
+      "summary_template": "relative_use_forbidden: `use` must start with `crate::`",
+      "primary_span_rule": "`use` path span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0710",
+      "summary_template": "layer_violation: illegal import across layers",
+      "primary_span_rule": "`use` item span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0800",
+      "summary_template": "invalid_refinement_predicate: refinement predicate not in closed DSL",
+      "primary_span_rule": "predicate span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0801",
+      "summary_template": "refinement_constructor_forbidden: use validate for non-literals",
+      "primary_span_rule": "constructor call span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0802",
+      "summary_template": "max_lines_exceeded",
+      "primary_span_rule": "function name span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0803",
+      "summary_template": "max_params_exceeded",
+      "primary_span_rule": "function name span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0804",
+      "summary_template": "max_nesting_exceeded",
+      "primary_span_rule": "deepest construct span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0805",
+      "summary_template": "max_complexity_exceeded",
+      "primary_span_rule": "function name span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0903",
+      "summary_template": "must_handle_expression_statement: cannot ignore must-handle",
+      "primary_span_rule": "expression statement span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0904",
+      "summary_template": "must_handle_underscore_binding_forbidden",
+      "primary_span_rule": "binding pattern span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E0911",
+      "summary_template": "must_handle_bound_but_unused: must-handle value not consumed",
+      "primary_span_rule": "variable name span",
+      "suggestion_fix_it": ""
+    },
+    {
+      "code": "E1201",
+      "summary_template": "formatter_not_idempotent: formatting is not idempotent",
+      "primary_span_rule": "whole file",
+      "suggestion_fix_it": ""
+    }
+  ]
+}

@@ -1,0 +1,174 @@
+// Axiom Standard Library Stubs v0.2.1.1
+// Locked surface. Signatures only.
+
+/////////////////////////
+// Marker Traits
+/////////////////////////
+
+trait Copy { }
+trait Eq { }
+trait Ord { }
+trait Hash { }
+trait Display { }
+trait Debug { }
+
+/////////////////////////
+// Core Sum Types
+/////////////////////////
+
+type Option<T> =
+  | Option::Some { value: T }
+  | Option::None
+
+type Result<T, E> =
+  | Result::Ok { value: T }
+  | Result::Err { error: E }
+
+/////////////////////////
+// Core Opaque Types
+/////////////////////////
+
+type String = { }
+type Vec<T> = { }
+type Map<K, V> = { }
+type Set<T> = { }
+
+type Raw<T> = { }
+
+type Path = { }
+type Url = { }
+
+type Future<T> = { }
+
+/////////////////////////
+// Core Errors
+/////////////////////////
+
+type IoError =
+  | IoError::NotFound
+  | IoError::PermissionDenied
+  | IoError::InvalidInput
+  | IoError::Other { message: String }
+
+type UrlError =
+  | UrlError::InvalidUrl
+
+type HttpError =
+  | HttpError::Network
+  | HttpError::BadStatus { status: u16 }
+
+type ValidationError<R> =
+  | ValidationError::Failed { message: String }
+
+/////////////////////////
+// Capabilities
+/////////////////////////
+
+type AllCaps = { }
+
+type FileRead<P> = { }
+type FileWrite<P> = { }
+type Network<H> = { }
+
+/////////////////////////
+// Trait Impls (Marker Only)
+/////////////////////////
+
+impl Copy for i8 { }
+impl Copy for i16 { }
+impl Copy for i32 { }
+impl Copy for i64 { }
+impl Copy for u8 { }
+impl Copy for u16 { }
+impl Copy for u32 { }
+impl Copy for u64 { }
+impl Copy for f32 { }
+impl Copy for f64 { }
+impl Copy for bool { }
+impl Copy for char { }
+
+impl Display for i8 { }
+impl Display for i16 { }
+impl Display for i32 { }
+impl Display for i64 { }
+impl Display for u8 { }
+impl Display for u16 { }
+impl Display for u32 { }
+impl Display for u64 { }
+impl Display for f32 { }
+impl Display for f64 { }
+impl Display for bool { }
+impl Display for char { }
+impl Display for String { }
+impl Display for Url { }
+impl Display for Path { }
+impl Display for &str { }
+
+impl Copy for AllCaps { }
+impl<P> Copy for FileRead<P> { }
+impl<P> Copy for FileWrite<P> { }
+impl<H> Copy for Network<H> { }
+
+/////////////////////////
+// String
+/////////////////////////
+
+impl String {
+  fn from(s: &str) -> String
+  fn len(self: &String) -> u64
+}
+
+/////////////////////////
+// Path, Url
+/////////////////////////
+
+impl Path {
+  fn new(s: &str) -> Path
+}
+
+impl Url {
+  fn parse(s: &str) -> Result<Url, UrlError>
+}
+
+/////////////////////////
+// Prelude Intrinsics
+/////////////////////////
+
+fn validate<R>(x: Raw<Base<R>>) -> Result<R, ValidationError<R>>
+fn validate<R>(x: Base<R>) -> Result<R, ValidationError<R>>
+
+/////////////////////////
+// fmt
+/////////////////////////
+
+mod fmt {
+  fn to_string<T: Display>(v: T) -> String
+  fn format1<T: Display>(fmt_literal: &str, a0: T) -> String
+  fn count_lines(s: String) -> u64
+}
+
+/////////////////////////
+// io
+/////////////////////////
+
+mod io {
+  fn println<T: Display>(v: T) -> () ! IO
+  fn read_line() -> Result<Raw<String>, IoError> ! IO
+}
+
+/////////////////////////
+// fs
+/////////////////////////
+
+mod fs {
+  fn read_text<P>(cap: FileRead<P>, path: Path) -> Result<String, IoError> ! IO
+  fn write_text<P>(cap: FileWrite<P>, path: Path, contents: String) -> Result<(), IoError> ! IO
+}
+
+/////////////////////////
+// http
+/////////////////////////
+
+mod http {
+  async fn get<H>(cap: Network<H>, url: Url) -> Result<String, HttpError> ! IO + Async
+}
